@@ -28,14 +28,14 @@ git clone <this-repo-url>
 cd url-shortener
 ```
 
-There's nothing to `pip install`. Just run `main.py` with `python3`.
+There's nothing to `pip install`. Just run `main.py` with `py`.
 
 ## Usage
 
 ```bash
-python3 main.py shorten <url> [--alias CODE]
-python3 main.py resolve <code> [--open]
-python3 main.py list [--json]
+py main.py shorten <url> [--alias CODE]
+py main.py resolve <code> [--open]
+py main.py list [--json]
 ```
 
 By default the database lives at `~/.urlshortener/shortener.db`, so the
@@ -46,7 +46,7 @@ location, which is also how the test suite isolates itself.
 ### Shorten a URL
 
 ```
-$ python3 main.py shorten "https://github.com/psf/requests/blob/main/README.md"
+$ py main.py shorten "https://github.com/psf/requests/blob/main/README.md"
 c8x
 ```
 
@@ -56,7 +56,7 @@ in a variable or pipe elsewhere.
 ### Shorten with a custom alias
 
 ```
-$ python3 main.py shorten "https://example.com/pricing" --alias pricing
+$ py main.py shorten "https://example.com/pricing" --alias pricing
 pricing
 ```
 
@@ -65,14 +65,14 @@ Aliases must be 3-32 characters, using only letters, digits, `-`, and
 of overwriting the existing mapping:
 
 ```
-$ python3 main.py shorten "https://example.com/other" --alias pricing
+$ py main.py shorten "https://example.com/other" --alias pricing
 error: Alias 'pricing' is already taken (points to https://example.com/pricing).
 ```
 
 ### Shortening the same URL again
 
 ```
-$ python3 main.py shorten "https://github.com/psf/requests/blob/main/README.md"
+$ py main.py shorten "https://github.com/psf/requests/blob/main/README.md"
 c8x
 (note: 'https://github.com/psf/requests/blob/main/README.md' was already shortened as 'c8x')
 ```
@@ -83,27 +83,27 @@ scripts consuming the code aren't affected.
 ### Resolve a code
 
 ```
-$ python3 main.py resolve pricing
+$ py main.py resolve pricing
 https://example.com/pricing
 ```
 
 Add `--open` to also open the URL in your default browser:
 
 ```
-$ python3 main.py resolve pricing --open
+$ py main.py resolve pricing --open
 ```
 
 Resolving an unknown code fails clearly instead of crashing:
 
 ```
-$ python3 main.py resolve doesnotexist
+$ py main.py resolve doesnotexist
 error: No URL found for code 'doesnotexist'.
 ```
 
 ### List everything
 
 ```
-$ python3 main.py list
+$ py main.py list
 CODE     CLICKS  CREATED              URL
 c8x           0  2026-08-29T09:24:22+00:00  https://github.com/psf/requests/blob/main/README.md
 c8y           0  2026-08-29T09:24:22+00:00  https://docs.python.org/3/library/sqlite3.html
@@ -113,7 +113,7 @@ pricing       1  2026-08-29T09:24:23+00:00  https://example.com/pricing
 Pass `--json` for machine-readable output:
 
 ```
-$ python3 main.py list --json
+$ py main.py list --json
 [
   {
     "code": "pricing",
@@ -127,7 +127,7 @@ $ python3 main.py list --json
 ### Invalid input
 
 ```
-$ python3 main.py shorten "not-a-url"
+$ py main.py shorten "not-a-url"
 error: Unsupported or missing scheme in 'not-a-url'. URLs must start with http:// or https://.
 ```
 
@@ -154,7 +154,7 @@ status code `1`; successful commands exit with `0`.
 ## Running the tests
 
 ```bash
-python3 -m unittest discover -s tests -v
+py -m unittest discover -s tests -v
 ```
 
 The tests use a temporary SQLite file per test case, so they never
