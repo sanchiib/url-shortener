@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-"""
-main.py - a tiny, self-contained URL shortener.
-
-Subcommands:
-    shorten <url> [--alias CODE]   create a short code for a URL
-    resolve <code> [--open]        look up the URL behind a code
-    list [--json]                  show everything stored so far
-
-Storage is a single SQLite file so the tool works the same way from
-any directory and survives across runs without any extra services.
-No third-party packages, no network calls, no external shortening APIs.
-"""
 
 from __future__ import annotations
 
@@ -27,11 +15,8 @@ from urllib.parse import urlparse
 
 DEFAULT_DB_PATH = Path.home() / ".urlshortener" / "shortener.db"
 
-# Codes are base62 encodings of the row's autoincrement id, offset so
-# that even the first entry produces something that looks like a real
-# short code instead of "1", "2", "3", ...
 BASE62_ALPHABET = string.digits + string.ascii_lowercase + string.ascii_uppercase
-CODE_OFFSET = 46_656  # 62^3, i.e. guarantees at least 4 base62 digits
+CODE_OFFSET = 46_656 
 
 ALIAS_RE = re.compile(r"^[A-Za-z0-9_-]{3,32}$")
 
@@ -40,9 +25,7 @@ class ShortenerError(Exception):
     """Raised for any user-facing failure (bad input, missing code, ...)."""
 
 
-# --------------------------------------------------------------------------
 # storage
-# --------------------------------------------------------------------------
 
 class Storage:
     """Thin wrapper around the sqlite3 connection and schema."""
@@ -137,9 +120,7 @@ class Storage:
         return cur.fetchall()
 
 
-# --------------------------------------------------------------------------
 # helpers
-# --------------------------------------------------------------------------
 
 def encode_base62(num: int) -> str:
     if num == 0:
@@ -179,9 +160,7 @@ def validate_alias(alias: str) -> str:
     return alias
 
 
-# --------------------------------------------------------------------------
 # commands
-# --------------------------------------------------------------------------
 
 def cmd_shorten(store: Storage, args: argparse.Namespace) -> None:
     long_url = validate_url(args.url)
@@ -198,8 +177,7 @@ def cmd_shorten(store: Storage, args: argparse.Namespace) -> None:
         print(row["code"])
         return
 
-    # No alias requested: if this exact URL was already shortened before,
-    # hand back the existing code instead of creating a duplicate entry.
+
     existing = store.find_by_url(long_url)
     if existing is not None:
         print(existing["code"])
@@ -256,10 +234,7 @@ def cmd_list(store: Storage, args: argparse.Namespace) -> None:
             f"{r['created_at']:<19}  {r['long_url']}"
         )
 
-
-# --------------------------------------------------------------------------
 # CLI wiring
-# --------------------------------------------------------------------------
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
